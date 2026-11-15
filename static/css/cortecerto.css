@@ -1,0 +1,22 @@
+:root {
+  --cc-cor-principal: #1f2a37;
+  --cc-cor-texto-sobre-principal: #ffffff;
+}
+
+.cc-cabecalho {
+  background-color: var(--cc-cor-principal);
+  color: var(--cc-cor-texto-sobre-principal);
+  padding: 0.75rem 0;
+}
+
+.cc-marca {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* Foco de teclado sempre perceptível */
+:focus-visible {
+  outline: 3px solid #0b5ed7;
+  outline-offset: 2px;
+}
