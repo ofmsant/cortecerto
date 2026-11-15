@@ -218,3 +218,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Bancos de dados usados nos testes de desempenho
+desempenho.sqlite3
+desempenho-um-dia.sqlite3
