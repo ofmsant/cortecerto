@@ -1,4 +1,8 @@
-"""Configurações do projeto CorteCerto."""
+"""Configurações do projeto CorteCerto.
+
+Valores sensíveis e dependentes do ambiente vêm de variáveis de ambiente
+(ou do arquivo .env local, que não é versionado).
+"""
 import os
 from pathlib import Path
 
@@ -31,8 +35,17 @@ if not SECRET_KEY:
 
 DEBUG = env_bool("DJANGO_DEBUG", False)
 
+if not DEBUG and SECRET_KEY.startswith("troque-esta-chave"):
+    raise ImproperlyConfigured(
+        "Use uma DJANGO_SECRET_KEY própria quando DJANGO_DEBUG for False."
+    )
+
 ALLOWED_HOSTS = env_lista("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1")
 CSRF_TRUSTED_ORIGINS = env_lista("DJANGO_CSRF_TRUSTED_ORIGINS")
+
+# Endereço do admin (somente para gerenciar a conta de acesso). Pode ser trocado
+# por um endereço menos óbvio em produção.
+ADMIN_URL = (os.environ.get("DJANGO_ADMIN_URL", "").strip().strip("/") or "admin") + "/"
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -50,6 +63,8 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    # Exige login em todas as views, exceto as marcadas com login_not_required.
+    "django.contrib.auth.middleware.LoginRequiredMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -74,6 +89,9 @@ TEMPLATES = [
 WSGI_APPLICATION = "cortecerto.wsgi.application"
 ASGI_APPLICATION = "cortecerto.asgi.application"
 
+# Banco de dados: SQLite em arquivo (persistente).
+# transaction_mode IMMEDIATE faz a transação reservar a escrita logo no início,
+# para a checagem de conflito de horário e a gravação não serem intercaladas.
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -82,10 +100,8 @@ DATABASES = {
     }
 }
 
-# Deixei vazio até definir os períodos de atendimento.
-PERIODOS_ATENDIMENTO = os.environ.get(
-    "CORTECERTO_PERIODOS_ATENDIMENTO", ""
-).strip()
+# Períodos de atendimento (sem valor padrão). Formato: "HH:MM-HH:MM,HH:MM-HH:MM".
+PERIODOS_ATENDIMENTO = os.environ.get("CORTECERTO_PERIODOS_ATENDIMENTO", "").strip()
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -93,6 +109,11 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
+
+# Autenticação
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "agenda:inicio"
+LOGOUT_REDIRECT_URL = "login"
 
 LANGUAGE_CODE = "pt-br"
 TIME_ZONE = "America/Sao_Paulo"
@@ -105,19 +126,26 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Faz as mensagens do Django usarem as classes de alerta do Bootstrap.
 MESSAGE_TAGS = {niveis_mensagem.ERROR: "danger"}
 
+# Segurança de transporte e cookies.
+# Por padrão, fica desligado em desenvolvimento e ligado quando DEBUG=False.
 USAR_HTTPS = env_bool("DJANGO_HTTPS", not DEBUG)
 
 SESSION_COOKIE_SECURE = USAR_HTTPS
 CSRF_COOKIE_SECURE = USAR_HTTPS
 SECURE_SSL_REDIRECT = USAR_HTTPS
-
 if USAR_HTTPS:
     SECURE_HSTS_SECONDS = 3600
     SECURE_HSTS_INCLUDE_SUBDOMAINS = False
     SECURE_HSTS_PRELOAD = False
 
+# Sessão e cookies
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 7  # 7 dias
 SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SAMESITE = "Lax"
+
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = "DENY"
