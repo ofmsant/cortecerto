@@ -50,6 +50,7 @@ class AgendamentoForm(forms.ModelForm):
             if nome == "tipo":
                 continue
             campo.widget.attrs["class"] = "form-control form-control-lg"
+            campo.widget.attrs["aria-required"] = "true"
             ids = [f"erro-{nome}"]
             if nome == "duracao_minutos":
                 ids.insert(0, f"dica-{nome}")
@@ -64,8 +65,10 @@ class AgendamentoForm(forms.ModelForm):
 
     def full_clean(self):
         super().full_clean()
-        # Marca visualmente os campos com erro (o texto do erro aparece junto ao campo).
+        # Marca os campos com erro (visualmente e para leitores de tela). O texto
+        # do erro aparece junto ao campo.
         for nome in self._errors or {}:
             if nome in self.fields and nome != "tipo":
                 atributos = self.fields[nome].widget.attrs
                 atributos["class"] = f'{atributos.get("class", "")} is-invalid'.strip()
+                atributos["aria-invalid"] = "true"

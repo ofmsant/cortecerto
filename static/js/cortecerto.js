@@ -1,6 +1,8 @@
-// Evita envio duplicado: depois do primeiro envio de um formulário marcado com
-// data-evitar-duplo, novos envios são ignorados e os botões ficam desabilitados.
-// A proteção real contra duplicidade continua no servidor.
+// 1) Evita envio duplicado: depois do primeiro envio de um formulário marcado com
+//    data-evitar-duplo, novos envios são ignorados e os botões ficam desabilitados.
+//    A proteção real contra duplicidade continua no servidor.
+// 2) Quando a página volta com erros de formulário, leva o foco para o resumo de
+//    erros, para que leitores de tela e quem usa teclado percebam o problema.
 (function () {
   "use strict";
 
@@ -36,4 +38,9 @@
       });
     });
   });
+
+  var resumoDeErros = document.getElementById("resumo-erros");
+  if (resumoDeErros) {
+    resumoDeErros.focus();
+  }
 })();

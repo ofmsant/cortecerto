@@ -1,6 +1,7 @@
 :root {
   --cc-cor-principal: #1f2a37;
   --cc-cor-texto-sobre-principal: #ffffff;
+  --cc-cor-foco: #0b5ed7;
 }
 
 body {
@@ -56,6 +57,59 @@ body {
   min-width: 44px;
 }
 
+/* Cores com contraste reforçado (mínimo de 4,5:1 para texto) */
+.btn-primary {
+  --bs-btn-bg: #0a58ca;
+  --bs-btn-border-color: #0a58ca;
+  --bs-btn-hover-bg: #084298;
+  --bs-btn-hover-border-color: #084298;
+  --bs-btn-active-bg: #084298;
+  --bs-btn-active-border-color: #084298;
+  --bs-btn-disabled-bg: #0a58ca;
+  --bs-btn-disabled-border-color: #0a58ca;
+}
+
+.btn-success {
+  --bs-btn-bg: #146c43;
+  --bs-btn-border-color: #146c43;
+  --bs-btn-hover-bg: #0f5132;
+  --bs-btn-hover-border-color: #0f5132;
+  --bs-btn-active-bg: #0f5132;
+  --bs-btn-active-border-color: #0f5132;
+  --bs-btn-disabled-bg: #146c43;
+  --bs-btn-disabled-border-color: #146c43;
+}
+
+.btn-danger {
+  --bs-btn-bg: #b02a37;
+  --bs-btn-border-color: #b02a37;
+  --bs-btn-hover-bg: #842029;
+  --bs-btn-hover-border-color: #842029;
+  --bs-btn-active-bg: #842029;
+  --bs-btn-active-border-color: #842029;
+  --bs-btn-disabled-bg: #b02a37;
+  --bs-btn-disabled-border-color: #b02a37;
+}
+
+.btn-outline-danger {
+  --bs-btn-color: #b02a37;
+  --bs-btn-border-color: #b02a37;
+  --bs-btn-hover-bg: #b02a37;
+  --bs-btn-hover-border-color: #b02a37;
+  --bs-btn-active-bg: #b02a37;
+  --bs-btn-active-border-color: #b02a37;
+  --bs-btn-disabled-color: #b02a37;
+  --bs-btn-disabled-border-color: #b02a37;
+}
+
+.invalid-feedback {
+  color: #b02a37;
+}
+
+main a:not(.btn) {
+  color: #0a58ca;
+}
+
 /* Painéis e textos de apoio */
 .cc-painel {
   background-color: #ffffff;
@@ -81,6 +135,18 @@ body {
 
 .cc-confirmacao {
   max-width: 32rem;
+}
+
+/* Campo de data da navegação: encolhe e quebra linha em telas estreitas */
+.cc-campo-data {
+  flex: 1 1 11rem;
+  min-width: 0;
+}
+
+/* Textos longos não podem estourar a largura da tela */
+.alert,
+code {
+  overflow-wrap: anywhere;
 }
 
 /* Itens da agenda e do histórico */
@@ -194,12 +260,16 @@ body {
   display: none !important;
 }
 
-/* Foco de teclado sempre perceptível */
-:focus-visible {
-  outline: 3px solid #0b5ed7;
+/* Foco de teclado sempre perceptível (substitui o halo fraco do Bootstrap) */
+:focus-visible,
+.btn:focus-visible,
+.form-control:focus,
+.form-check-input:focus {
+  outline: 3px solid var(--cc-cor-foco);
   outline-offset: 2px;
 }
 
-.cc-cabecalho :focus-visible {
+.cc-cabecalho :focus-visible,
+.cc-cabecalho .btn:focus-visible {
   outline-color: #ffffff;
 }
