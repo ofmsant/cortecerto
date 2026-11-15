@@ -7,7 +7,7 @@ from django.db import IntegrityError
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
-from django.views.decorators.http import require_http_methods, require_POST
+from django.views.decorators.http import require_http_methods, require_POST, require_safe
 
 from .disponibilidade import formatar_minutos, intervalos_livres, periodos_configurados
 from .forms import AgendamentoForm
@@ -185,6 +185,7 @@ def cancelar(request, pk):
     )
 
 
+@require_safe
 def historico(request):
     registros = Agendamento.objects.historico().order_by("-data", "-horario", "-pk")
     pagina = Paginator(registros, ITENS_POR_PAGINA).get_page(request.GET.get("pagina"))
