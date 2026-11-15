@@ -1,0 +1,6 @@
+<div class="mb-3">
+  <label for="{{ campo.id_for_label }}" class="form-label">{{ campo.label }}</label>
+  {{ campo }}
+  {% if dica %}<div class="form-text" id="dica-{{ campo.html_name }}">{{ dica }}</div>{% endif %}
+  <div class="invalid-feedback d-block" id="erro-{{ campo.html_name }}">{% for erro in campo.errors %}<span class="visually-hidden">Erro: </span>{{ erro }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</div>
+</div>

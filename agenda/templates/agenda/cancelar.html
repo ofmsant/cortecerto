@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block titulo %}Cancelar agendamento{% endblock %}
+
+{% block conteudo %}
+<section aria-labelledby="titulo-cancelar" class="cc-painel cc-confirmacao mx-auto">
+  <h1 id="titulo-cancelar" class="h4">Cancelar este agendamento?</h1>
+  <p>
+    O registro será mantido no histórico como cancelado e o horário voltará a ficar livre.
+  </p>
+
+  <dl class="row">
+    <dt class="col-5">Cliente</dt>
+    <dd class="col-7 cc-nome">{{ agendamento.nome_cliente }}</dd>
+    <dt class="col-5">Data</dt>
+    <dd class="col-7">{{ agendamento.data|date:"d/m/Y" }}</dd>
+    <dt class="col-5">Horário</dt>
+    <dd class="col-7">{{ agendamento.horario|time:"H:i" }} às {{ fim }}</dd>
+    <dt class="col-5">Tipo</dt>
+    <dd class="col-7">{{ agendamento.get_tipo_display }}</dd>
+  </dl>
+
+  <form method="post" class="d-grid gap-2" data-evitar-duplo>
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger btn-lg cc-botao">Confirmar cancelamento</button>
+    <a class="btn btn-outline-dark btn-lg cc-botao" href="{{ url_voltar }}">Voltar sem cancelar</a>
+  </form>
+</section>
+{% endblock %}

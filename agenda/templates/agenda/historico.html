@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block titulo %}Histórico{% endblock %}
+
+{% block conteudo %}
+<h1 class="h4 mb-3">Histórico e resultados</h1>
+
+<section aria-labelledby="titulo-resultado" class="cc-painel mb-4">
+  <h2 id="titulo-resultado" class="h6 mb-1">Cortes gratuitos concluídos</h2>
+  <p class="cc-numero mb-1" id="total-gratuitos">{{ total_gratuitos }}</p>
+  <p class="cc-suave small mb-0">
+    Conta somente cortes gratuitos marcados como concluídos. Cancelados e ainda agendados
+    não entram na contagem.
+  </p>
+</section>
+
+<section aria-labelledby="titulo-lista">
+  <h2 id="titulo-lista" class="h5">Atendimentos registrados</h2>
+
+  {% if pagina.object_list %}
+    <ul class="list-unstyled d-grid gap-3">
+      {% for ag in pagina %}
+        <li class="cc-item cc-borda-{{ ag.tipo }}{% if ag.status == 'cancelado' %} cc-cancelado{% endif %}">
+          <div class="d-flex flex-wrap justify-content-between gap-2">
+            <div>
+              <p class="cc-horario mb-0">{{ ag.data|date:"d/m/Y" }} às {{ ag.horario|time:"H:i" }}</p>
+              <p class="cc-nome mb-1">{{ ag.nome_cliente }}</p>
+              <p class="cc-suave small mb-0">Duração: {{ ag.duracao_minutos }} min</p>
+            </div>
+            <div class="d-flex flex-wrap gap-1 align-items-start">
+              <span class="cc-selo cc-selo-{{ ag.tipo }}">{{ ag.get_tipo_display }}</span>
+              <span class="cc-status cc-status-{{ ag.status }}">{{ ag.get_status_display }}</span>
+            </div>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+
+    {% if pagina.has_other_pages %}
+      <nav aria-label="Páginas do histórico" class="d-flex align-items-center justify-content-between gap-2">
+        {% if pagina.has_previous %}
+          <a class="btn btn-outline-dark cc-botao" href="?pagina={{ pagina.previous_page_number }}">Anterior</a>
+        {% else %}
+          <span></span>
+        {% endif %}
+        <span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
+        {% if pagina.has_next %}
+          <a class="btn btn-outline-dark cc-botao" href="?pagina={{ pagina.next_page_number }}">Próxima</a>
+        {% else %}
+          <span></span>
+        {% endif %}
+      </nav>
+    {% endif %}
+  {% else %}
+    <p class="cc-painel">Nenhum atendimento registrado no histórico ainda.</p>
+  {% endif %}
+</section>
+{% endblock %}

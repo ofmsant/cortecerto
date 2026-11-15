@@ -1,13 +1,144 @@
 {% extends "base.html" %}
 
-{% block titulo %}Início{% endblock %}
+{% block titulo %}Agenda{% endblock %}
 
 {% block conteudo %}
-<section aria-labelledby="titulo-inicio">
-  <h1 id="titulo-inicio" class="h3">CorteCerto</h1>
-  <p>Você entrou como <strong>{{ user.get_username }}</strong>.</p>
-  <p class="text-body-secondary">
-    Esta página é temporária e será substituída pela agenda nas próximas fases.
-  </p>
-</section>
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+  <h1 class="h4 mb-0">
+    Agenda de {{ dia|date:"l, j \d\e F \d\e Y" }}{% if eh_hoje %} (hoje){% endif %}
+  </h1>
+  <a class="btn btn-primary cc-botao" href="#novo-agendamento">Novo agendamento</a>
+</div>
+
+<nav aria-label="Navegação entre datas" class="mb-4">
+  <div class="d-flex gap-2 mb-2">
+    {% if anterior %}
+      <a class="btn btn-outline-dark cc-botao flex-fill"
+         href="{% url 'agenda:inicio' %}?data={{ anterior|date:'Y-m-d' }}">Dia anterior</a>
+    {% endif %}
+    {% if proximo %}
+      <a class="btn btn-outline-dark cc-botao flex-fill"
+         href="{% url 'agenda:inicio' %}?data={{ proximo|date:'Y-m-d' }}">Próximo dia</a>
+    {% endif %}
+  </div>
+  <form method="get" action="{% url 'agenda:inicio' %}" class="d-flex gap-2 align-items-end">
+    <div class="flex-grow-1">
+      <label for="id_ir_data" class="form-label mb-1">Ir para a data</label>
+      <input type="date" id="id_ir_data" name="data" value="{{ dia|date:'Y-m-d' }}"
+             class="form-control cc-botao" required>
+    </div>
+    <button type="submit" class="btn btn-dark cc-botao">Ir</button>
+    <a class="btn btn-outline-dark cc-botao" href="{% url 'agenda:inicio' %}">Hoje</a>
+  </form>
+</nav>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+
+    <section aria-labelledby="titulo-livres" class="cc-painel mb-4">
+      <h2 id="titulo-livres" class="h5">Horários livres</h2>
+      {% if periodos_invalidos %}
+        <p class="mb-0">
+          A configuração dos períodos de atendimento está inválida. Corrija a variável
+          <code>CORTECERTO_PERIODOS_ATENDIMENTO</code> para ver os horários livres.
+        </p>
+      {% elif not periodos_definidos %}
+        <p class="mb-0">
+          Os períodos de atendimento ainda não foram configurados, por isso os horários
+          livres não são exibidos.
+        </p>
+      {% elif livres %}
+        <ul class="list-unstyled mb-0 d-grid gap-2">
+          {% for livre in livres %}
+            <li class="cc-livre d-flex flex-wrap align-items-center justify-content-between gap-2">
+              <span>
+                <strong>{{ livre.inicio }} às {{ livre.fim }}</strong>
+                <span class="cc-suave">({{ livre.minutos }} min livres)</span>
+              </span>
+              <a class="btn btn-outline-dark cc-botao"
+                 href="{% url 'agenda:inicio' %}?data={{ dia|date:'Y-m-d' }}&amp;horario={{ livre.inicio }}#novo-agendamento">Agendar às {{ livre.inicio }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="mb-0">Não há horários livres nesta data dentro dos períodos de atendimento.</p>
+      {% endif %}
+    </section>
+
+    <section aria-labelledby="titulo-agendamentos">
+      <h2 id="titulo-agendamentos" class="h5">Agendamentos do dia</h2>
+      {% if itens %}
+        <ul class="list-unstyled d-grid gap-3">
+          {% for item in itens %}
+            {% with ag=item.ag %}
+              <li class="cc-item cc-borda-{{ ag.tipo }}{% if ag.status == 'cancelado' %} cc-cancelado{% endif %}">
+                <div class="d-flex flex-wrap justify-content-between gap-2">
+                  <div>
+                    <p class="cc-horario mb-0">{{ ag.horario|time:"H:i" }} às {{ item.fim }}</p>
+                    <p class="cc-nome mb-1">{{ ag.nome_cliente }}</p>
+                  </div>
+                  <div class="d-flex flex-wrap gap-1 align-items-start">
+                    <span class="cc-selo cc-selo-{{ ag.tipo }}">{{ ag.get_tipo_display }}</span>
+                    <span class="cc-status cc-status-{{ ag.status }}">{{ ag.get_status_display }}</span>
+                  </div>
+                </div>
+                {% if ag.status == 'agendado' %}
+                  <div class="d-flex flex-wrap gap-2 mt-2">
+                    <form method="post" action="{% url 'agenda:concluir' ag.pk %}" class="m-0" data-evitar-duplo>
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-success cc-botao"
+                              aria-label="Concluir atendimento de {{ ag.nome_cliente }}">Concluir</button>
+                    </form>
+                    <a class="btn btn-outline-danger cc-botao"
+                       href="{% url 'agenda:cancelar' ag.pk %}"
+                       aria-label="Cancelar agendamento de {{ ag.nome_cliente }}">Cancelar</a>
+                  </div>
+                {% endif %}
+              </li>
+            {% endwith %}
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="cc-painel">Nenhum agendamento para este dia.</p>
+      {% endif %}
+    </section>
+  </div>
+
+  <div class="col-lg-5">
+    <section id="novo-agendamento" aria-labelledby="titulo-novo" class="cc-painel">
+      <h2 id="titulo-novo" class="h5">Novo agendamento</h2>
+
+      <form method="post" action="{{ url_formulario }}#novo-agendamento" novalidate data-evitar-duplo>
+        {% csrf_token %}
+
+        {% if formulario.errors %}
+          <div class="alert alert-danger" role="alert">
+            Não foi possível salvar o agendamento. Corrija o que está indicado abaixo.
+            {% for erro in formulario.non_field_errors %}
+              <div class="mt-1">{{ erro }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        {% include "agenda/_campo.html" with campo=formulario.nome_cliente %}
+        {% include "agenda/_campo.html" with campo=formulario.data %}
+        {% include "agenda/_campo.html" with campo=formulario.horario %}
+        {% include "agenda/_campo.html" with campo=formulario.duracao_minutos dica="Informe a duração do atendimento em minutos (de 1 a 1440)." %}
+
+        <fieldset class="mb-4" aria-describedby="erro-tipo">
+          <legend class="form-label fs-6 mb-1">Tipo de corte</legend>
+          {% for radio in formulario.tipo %}
+            <div class="cc-opcao">
+              {{ radio.tag }}
+              <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+            </div>
+          {% endfor %}
+          <div class="invalid-feedback d-block" id="erro-tipo">{% for erro in formulario.tipo.errors %}<span class="visually-hidden">Erro: </span>{{ erro }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</div>
+        </fieldset>
+
+        <button type="submit" class="btn btn-primary btn-lg w-100 cc-botao">Salvar agendamento</button>
+      </form>
+    </section>
+  </div>
+</div>
 {% endblock %}
