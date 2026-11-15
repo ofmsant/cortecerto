@@ -15,6 +15,17 @@
   letter-spacing: 0.02em;
 }
 
+/* Área de toque mínima de 44 x 44 px */
+.cc-botao-sair {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Cartão de login estreito, em uma coluna */
+.cc-login {
+  max-width: 26rem;
+}
+
 /* Foco de teclado sempre perceptível */
 :focus-visible {
   outline: 3px solid #0b5ed7;

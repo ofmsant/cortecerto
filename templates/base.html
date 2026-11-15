@@ -13,8 +13,14 @@
   <a class="visually-hidden-focusable" href="#conteudo-principal">Ir para o conteúdo</a>
 
   <header class="cc-cabecalho">
-    <div class="container">
+    <div class="container d-flex align-items-center justify-content-between">
       <span class="cc-marca">CorteCerto</span>
+      {% if user.is_authenticated %}
+        <form method="post" action="{% url 'logout' %}" class="m-0">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline-light cc-botao-sair">Sair</button>
+        </form>
+      {% endif %}
     </div>
   </header>
 
@@ -22,7 +28,8 @@
     {% if messages %}
       <div aria-live="polite">
         {% for mensagem in messages %}
-          <div class="alert alert-{{ mensagem.tags|default:'info' }}" role="status">
+          <div class="alert alert-{{ mensagem.tags|default:'info' }}"
+               role="{% if mensagem.level_tag == 'error' %}alert{% else %}status{% endif %}">
             {{ mensagem }}
           </div>
         {% endfor %}

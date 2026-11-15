@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block titulo %}Página não encontrada{% endblock %}
+
+{% block conteudo %}
+<section aria-labelledby="titulo-erro">
+  <h1 id="titulo-erro" class="h3">Página não encontrada</h1>
+  <p>O endereço acessado não existe ou foi alterado.</p>
+  <a class="btn btn-primary cc-botao-sair" href="{% url 'agenda:inicio' %}">Voltar ao início</a>
+</section>
+{% endblock %}
