@@ -1,0 +1,57 @@
+name: Testes
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: testes-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  testes:
+    name: Verificações e testes (Python 3.12)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      # Valores FICTÍCIOS, usados somente neste ambiente de teste.
+      # Não há segredo real neste arquivo.
+      DJANGO_SECRET_KEY: chave-ficticia-usada-somente-nos-testes-do-ci
+      DJANGO_DEBUG: "True"
+      DJANGO_HTTPS: "False"
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v4
+
+      - name: Configurar o Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Instalar as dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Verificar a configuração do Django
+        run: python manage.py check
+
+      - name: Conferir se há migrações pendentes
+        run: python manage.py makemigrations --check --dry-run
+
+      - name: Aplicar as migrações
+        run: python manage.py migrate --noinput
+
+      - name: Executar os testes automatizados
+        run: python manage.py test
