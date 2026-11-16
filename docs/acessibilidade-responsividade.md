@@ -1,21 +1,21 @@
 # Acessibilidade e responsividade: procedimento e registro (Fase 6)
 
-Este documento descreve os procedimentos e registra os resultados das verificações de acessibilidade, responsividade e usabilidade do CorteCerto. Foram realizadas verificações automatizadas e manuais, sem identificação de problemas nas condições avaliadas.
+Este documento descreve os procedimentos e registra os resultados das verificações de acessibilidade, responsividade e usabilidade do CorteCerto. Foram realizadas verificações automatizadas e manuais, sem identificação de problemas nas condições avaliadas. A auditoria do Lighthouse não foi executada.
 
 ## 1. Ambiente da verificação
 
 | Item | Valor |
 |---|---|
 | Data da verificação | 15/11/2026 |
-| Versão de referência do projeto | `05669bc` — último commit anterior às alterações da Fase 6 |
+| Versão de referência do projeto | `05669bc`, último commit anterior às alterações da Fase 6 |
 | Navegador | Microsoft Edge 157.0.0.0 |
 | Sistema operacional | Windows 11 |
-| Modo de teste responsivo | Modo de dispositivo do Edge (emulação), sem celular físico |
+| Condições de verificação responsiva | Larguras correspondentes a dispositivos móveis, tablet e desktop |
 | Dados utilizados | Dados fictícios |
 | Framework de aplicação | Django 5.2.19 |
 | Python | 3.12.10 |
 
-**Observação:** a versão de referência corresponde ao código versionado antes das alterações da Fase 6. As alterações avaliadas serão registradas em commits próprios após a conclusão desta etapa.
+**Observação:** a versão de referência corresponde ao código versionado antes das alterações da Fase 6. Essas alterações foram versionadas nos commits `ea0de32`, `c4f26c4`, `6b749dd`, `05723f4` e `9c6a2e4`.
 
 ## 2. Verificações automáticas
 
@@ -45,9 +45,9 @@ Também foram executados os testes gerais do projeto e as verificações estrutu
 
 Os testes automatizados foram complementados por verificações manuais de apresentação, navegação, responsividade e utilização dos formulários.
 
-## 3. Larguras verificadas no modo de dispositivo do Edge
+## 3. Larguras verificadas
 
-Foram verificadas as telas de login, agenda e novo agendamento, histórico e confirmação de cancelamento nas larguras previstas para diferentes dispositivos.
+Foram verificadas as telas de login, agenda e novo agendamento, histórico e confirmação de cancelamento em larguras representativas de diferentes dispositivos.
 
 | Largura | Representação | Login | Agenda e novo agendamento | Histórico | Confirmação de cancelamento |
 |---|---|---|---|---|---|
@@ -89,7 +89,7 @@ A navegação foi verificada utilizando o teclado, com `Tab`, `Shift + Tab`, `En
 |---|---|
 | O foco está sempre visível, inclusive no cabeçalho | OK |
 | A ordem do foco acompanha a ordem visual e lógica | OK |
-| O link “Ir para o conteúdo” aparece ao receber foco e leva ao conteúdo principal | OK |
+| O link "Ir para o conteúdo" aparece ao receber foco e leva ao conteúdo principal | OK |
 | É possível criar, concluir e cancelar um agendamento sem usar o mouse | OK |
 | As opções Pago e Gratuito podem ser selecionadas pelo teclado | OK |
 | Nenhum elemento prende o foco | OK |
@@ -138,15 +138,15 @@ A interface foi verificada com ampliação de 200% e 400%, considerando a reduç
 
 ### 4.6 Lighthouse
 
-Foi considerada a avaliação de acessibilidade do Lighthouse como verificação complementar. Os resultados numéricos não foram registrados neste documento.
+A auditoria de acessibilidade do Lighthouse não foi executada nesta fase. Nenhuma pontuação foi obtida, e este documento não atribui resultados à ferramenta.
 
-| Tela | Pontuação | Problemas identificados |
+| Tela | Pontuação | Situação |
 |---|---|---|
-| Login | Não registrada | Nenhum problema identificado na verificação relatada |
-| Agenda e novo agendamento | Não registrada | Nenhum problema identificado na verificação relatada |
-| Histórico | Não registrada | Nenhum problema identificado na verificação relatada |
+| Login | Não disponível | Não executado |
+| Agenda e novo agendamento | Não disponível | Não executado |
+| Histórico | Não disponível | Não executado |
 
-A análise do Lighthouse é complementar e não substitui os testes automatizados específicos nem a avaliação manual. A ausência de problemas identificados nas verificações realizadas não representa uma certificação formal de conformidade com todas as diretrizes de acessibilidade.
+A auditoria poderá ser realizada posteriormente, utilizando a aba Lighthouse do Edge, a categoria Accessibility e o modo Mobile. Os resultados reais deverão ser registrados nesta seção caso a verificação seja realizada.
 
 ### 4.7 Leitor de tela
 
@@ -159,20 +159,20 @@ A avaliação com o Narrador do Windows é opcional. Não há resultado específ
 
 ## 5. Problemas encontrados e correções
 
-Durante as verificações manuais relatadas, não foram identificados problemas de acessibilidade, responsividade ou interação que exigissem correção adicional.
+Durante as verificações manuais registradas, não foram identificados problemas de acessibilidade, responsividade ou interação que exigissem correção adicional.
 
 | Nº | Tela e largura | Problema | Gravidade | Correção | Commit |
 |---|---|---|---|---|---|
-| — | Telas e larguras avaliadas | Nenhum problema identificado | — | Não necessária para os itens verificados | Pendente de versionamento da Fase 6 |
+| — | Telas e larguras avaliadas | Nenhum problema identificado nas condições verificadas | — | Não necessária para os itens avaliados | Não se aplica |
 
 As alterações implementadas na Fase 6 incluem melhorias de contraste, foco, apresentação responsiva e interação, acompanhadas de testes automatizados específicos e documentação de apoio.
 
 ## 6. Limitações
 
-- A emulação do modo de dispositivo do Edge não equivale a um teste em celular físico. O comportamento do teclado virtual, do navegador móvel e o desempenho em aparelhos reais não foram avaliados.
+- As verificações de responsividade cobriram as larguras definidas neste documento. Isso não comprova o comportamento em todos os modelos de celulares, navegadores ou versões de sistemas operacionais.
 - Os testes automatizados não substituem a avaliação visual e funcional das páginas.
 - O teste automatizado de contraste verifica as cores definidas no CSS, mas não substitui a inspeção de todos os estados visuais e elementos da interface.
-- O Lighthouse fornece indicadores automáticos e pode não identificar todas as barreiras de acessibilidade. As pontuações numéricas não foram registradas neste documento.
+- O Lighthouse não foi executado, portanto não há indicadores dessa ferramenta neste documento.
 - A avaliação específica com leitor de tela não possui resultado registrado.
 - Os resultados documentados são válidos para as versões, configurações e condições efetivamente avaliadas.
 - Os tempos de resposta registrados no documento de desempenho referem-se ao servidor HTTP local, sem renderização no navegador, CDN do Bootstrap ou rede móvel.
@@ -184,4 +184,6 @@ As verificações automatizadas e manuais registradas para a Fase 6 não identif
 
 Os 13 testes automatizados específicos de acessibilidade e contraste foram aprovados, assim como os 210 testes da suíte completa do projeto. As verificações estruturais do Django também foram concluídas sem problemas ou migrações pendentes.
 
-Os resultados de desempenho documentados atenderam aos critérios definidos para o ambiente local de teste. Dessa forma, as verificações previstas forneceram evidências favoráveis às melhorias implementadas, respeitando as limitações e os aspectos sem registro específico descritos neste documento.
+As larguras correspondentes a dispositivos móveis, tablet e desktop foram avaliadas sem identificação de falhas de responsividade nas condições verificadas. A auditoria do Lighthouse permanece não executada, e a avaliação específica com leitor de tela não possui resultado registrado.
+
+Os resultados de desempenho documentados atenderam aos critérios definidos para o ambiente local de teste. Dessa forma, as verificações realizadas forneceram evidências favoráveis às melhorias implementadas, respeitando as limitações e os aspectos sem registro descritos neste documento.
